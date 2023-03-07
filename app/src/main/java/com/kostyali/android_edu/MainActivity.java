@@ -1,6 +1,7 @@
 package com.kostyali.android_edu;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,7 +42,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonClick(View view) {
-        showAlertDialog(passwordTextView.getText().toString());
+        String message = passwordTextView.getText().toString();
+
+        if (message.isBlank())
+            Toast.makeText(this, "Пароль відсутній", Toast.LENGTH_SHORT).show();
+        else showAlertDialog(message);
     }
 
     private void showAlertDialog(String message) {
@@ -48,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setTitle("Скопійований пароль")
                 .setMessage(message)
                 .setCancelable(true)
+                .setPositiveButton("Закрити", (dialogInterface, i) -> dialogInterface.cancel())
                 .show();
     }
 }
