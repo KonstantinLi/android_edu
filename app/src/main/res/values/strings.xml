@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">android-edu</string>
+    <string name="input">Введіть пароль</string>
+    <string name="visible_pass">Показувати</string>
+    <string name="invisible_pass">Не показувати</string>
+    <string name="pass">Пароль</string>
+    <string name="ok">OK</string>
 </resources>
