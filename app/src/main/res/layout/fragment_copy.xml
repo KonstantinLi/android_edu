@@ -32,12 +32,12 @@
             android:inputType="textPersonName" />
 
         <ImageButton
-            android:id="@+id/copy_button"
+            android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5sp"
             android:layout_marginBottom="5sp"
-            android:onClick="onCopyButtonClick"
+            android:onClick="onSaveButtonClick"
             android:src="@android:drawable/checkbox_on_background" />
 
     </LinearLayout>

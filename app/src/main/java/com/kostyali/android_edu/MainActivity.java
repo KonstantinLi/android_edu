@@ -3,6 +3,11 @@ package com.kostyali.android_edu;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -17,6 +22,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.kostyali.android_edu.model.PasswordEntry;
+import com.kostyali.android_edu.model.PasswordReaderDBHelper;
+
 public class MainActivity extends AppCompatActivity {
     private static final TransformationMethod NO_SHOW_PASSWORD_METHOD = PasswordTransformationMethod.getInstance();
     private static final TransformationMethod SHOW_PASSWORD_METHOD = HideReturnsTransformationMethod.getInstance();
@@ -24,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private final FormFragment formFragment = new FormFragment();
     private final CopyFragment copyFragment = new CopyFragment();
 
-    private ClipboardManager clipboardManager;
     private TextView passwordTextView;
 
     @Override
@@ -34,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
         setFragment(formFragment, R.id.frame_form);
         setFragment(copyFragment, R.id.frame_copy);
-
-        clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
     }
 
     @Override
@@ -75,14 +80,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onCopyButtonClick(View view) {
+    public void onSaveButtonClick(View view) {
         String copyText = ((EditText) findViewById(R.id.copy_password)).getText().toString();
-        ClipData clipData = ClipData.newPlainText("text", copyText);
-        clipboardManager.setPrimaryClip(clipData);
+        savePassword(copyText);
 
-        Toast.makeText(this, "Пароль скопійований", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Пароль збережений", Toast.LENGTH_SHORT).show();
 
         setVisibleCopyFragment(false);
+    }
+
+    public void onOpenSavedDataButtonClick(View view) {
+        if (databaseIsEmpty()) {
+            Toast.makeText(this, "Дані відсутні", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(this, ListActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void setVisibleCopyFragment(boolean isVisible) {
@@ -100,5 +113,25 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(id, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    private boolean databaseIsEmpty() {
+        SQLiteDatabase db = new PasswordReaderDBHelper(this).getReadableDatabase();
+        SQLiteStatement statement = db.compileStatement("SELECT COUNT(*) FROM password");
+
+        long count = statement.simpleQueryForLong();
+        db.close();
+
+        return count == 0;
+    }
+
+    private void savePassword(String value) {
+        SQLiteDatabase db = new PasswordReaderDBHelper(this).getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PasswordEntry.COLUMN_VALUE, value);
+
+        db.insert(PasswordEntry.TABLE_NAME, null, values);
+        db.close();
     }
 }

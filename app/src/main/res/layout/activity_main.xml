@@ -10,8 +10,8 @@
 
     <FrameLayout
         android:id="@+id/frame_form"
-        android:layout_width="303sp"
-        android:layout_height="230sp"
+        android:layout_width="308dp"
+        android:layout_height="282dp"
         android:layout_marginTop="124dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,4 +31,5 @@
 
 
     </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
